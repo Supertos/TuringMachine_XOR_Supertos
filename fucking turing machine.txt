@@ -1,0 +1,347 @@
+// ------------------------------------------------------------------------------- \\
+// Supertos Industries
+// ------------------------------------------------------------------------------- \\
+// Author: Supertos
+// Year: 2023
+// Version: Rev.2
+// ------------------------------------------------------------------------------- \\
+// XOR LOGICAL UNIT
+// ------------------------------------------------------------------------------- \\
+
+// ====================================================================================== \\
+// DOCUMENT MAP:
+// 000 - 099 	INITIALIZATION												+-INITIALIZATION
+//
+// 100 - 101 	READ FIRST BIT OF A OPERAND									+
+// 200 - 299 	SKIP OPERAND A												|
+// 300 - 399 	READ FIRST BIT OF B OPERAND									|-FIRST BIT PROCESSING
+// 400 - 499 	SKIP OPERAND B												|
+// 500 - 599 	INSERT FIRST OUT BIT										+
+// 
+// 600 - 699 	RETURN BACK TO OPERAND A									+
+// 700 - 799 	RETURN BIT TO A, GET NEXT BIT								|
+// 800 - 899 	SKIP OPERAND A												|
+// 900 - 999 	SKIP OPERAND B LEFTOVERS, RETURN BIT TO B, GET NEXT BIT		|-MAIN FLOW
+// 1000 - 1099	SKIP OPERAND B LEFTOVERS									|
+// 1100 - 1199	SKIP UNFINISHED RESULT, PASTE BIT AND RETURN TO 600-699		+
+//
+// 1200 - 1299 	EXIT LOOP													+-FINALIZATION
+// ====================================================================================== \\
+
+// ====================================================================================== \\
+// COMPILATION DATA:
+// REDACTOR:	NOTEPAD++
+// OS:			WINDOWS 10 LTSC
+// LANGUAGE:	TURING'S MACHINE
+// DATE:		17.10.2023 ( 10/17/23 )
+// ====================================================================================== \\
+
+// ====================================================================================== \\
+// AUTHOR NOTE:
+// ЁПРСТ КАК ЖЕ Я ЗАДОЛБАЛСЯ ЭТО ПИСАТЬ, БОЖЕ, ДАЙ МНЕ СИЛ ЗАКОНЧИТЬ ЭТУ ГАДОСТЬ.
+// ====================================================================================== \\
+
+// ======================== ( 000 - 099 INITIALIZATION ) ======================== \\
+
+000, ,<,001 // MOVE LEFT ( CARRY A: NIL CARRY B: NIL RESTORE B: NIL )
+
+001,0,<,001 // MOVE TO THE START OF OPERAND B ( CARRY A: NIL CARRY B: NIL RESTORE B: NIL )
+001,1,<,001 
+001, ,<,002
+
+002,0,<,002 // MOVE TO THE START OF OPERAND A ( CARRY A: NIL CARRY B: NIL RESTORE B: NIL )
+002,1,<,002
+002, ,>,101
+
+// ======================== ( 100 - 199 READ FIRST BIT OF A OPERAND ) ======================== \\
+
+101,0, ,111 // READ BIT AND REPLACE IT WITH WHITESPACE ( CARRY A: NIL CARRY B: NIL RESTORE B: NIL )
+101,1, ,112
+
+111, ,>,201 // MOVE RIGHT ( CARRY A: 0 CARRY B: NIL RESTORE B: NIL )
+
+112, ,>,202 // MOVE RIGHT ( CARRY A: 1 CARRY B: NIL RESTORE B: NIL )
+
+// ======================== ( 200 - 299 SKIP OPERAND A ) ======================== \\
+
+201,0,>,201 // READ BIT ( CARRY A: 0 CARRY B: NIL RESTORE B: NIL )
+201,1,>,201
+201, ,>,301
+
+202,0,>,202 // READ BIT ( CARRY A: 1 CARRY B: NIL RESTORE B: NIL )
+202,1,>,202
+202, ,>,302
+
+// ======================== ( 300 - 399 READ FIRST BIT OF B OPERAND ) ======================== \\
+
+301,0, ,311 // READ BIT ( CARRY A: 0 CARRY B: NIL RESTORE B: NIL )
+301,1, ,312
+
+302,0, ,313 // READ BIT ( CARRY A: 1 CARRY B: NIL RESTORE B: NIL )
+302,1, ,314
+
+311, ,>,401 // MOVE RIGHT AND REPLACE IT WITH WHITESPACE ( CARRY A: 0 CARRY B: 0 RESTORE B: 0 )
+
+312, ,>,402 // MOVE RIGHT AND REPLACE IT WITH WHITESPACE ( CARRY A: 0 CARRY B: 1 RESTORE B: 1 )
+
+313, ,>,403 // MOVE RIGHT AND REPLACE IT WITH WHITESPACE ( CARRY A: 1 CARRY B: 0 RESTORE B: 0 )
+
+314, ,>,404 // MOVE RIGHT AND REPLACE IT WITH WHITESPACE ( CARRY A: 1 CARRY B: 1 RESTORE B: 1 )
+
+
+// ======================== ( 400 - 499 SKIP OPERAND B ) ======================== \\
+
+401,0,>,401 // READ BIT ( CARRY A: 0 CARRY B: 0 RESTORE B: 0 )
+401,1,>,401
+401, ,>,501
+
+402,0,>,402 // READ BIT ( CARRY A: 0 CARRY B: 1 RESTORE B: 1 )
+402,1,>,402
+402, ,>,502
+
+403,0,>,403 // READ BIT ( CARRY A: 1 CARRY B: 0 RESTORE B: 0 )
+403,1,>,403
+403, ,>,503
+
+404,0,>,404 // READ BIT ( CARRY A: 1 CARRY B: 1 RESTORE B: 1 )
+404,1,>,404
+404, ,>,504
+
+// ======================== ( 500 - 599 INSERT FIRST OUT BIT ) ======================== \\
+
+501, ,0,601 // INSERT BIT ( CARRY A: 0 CARRY B: 0 RESTORE B: 0 )
+
+502, ,1,602 // INSERT BIT ( CARRY A: 0 CARRY B: 1 RESTORE B: 1 )
+
+503, ,1,603 // INSERT BIT ( CARRY A: 1 CARRY B: 0 RESTORE B: 0 )
+
+504, ,0,604 // INSERT BIT ( CARRY A: 1 CARRY B: 1 RESTORE B: 1 )
+
+// ======================== ( 600 - 699 RETURN BACK TO OPERAND A ) ======================== \\
+
+601,0,<,601 // GO BACK TO THE END OF OPERAND B ( CARRY A: 0 CARRY B: 0 RESTORE B: 0 )
+601,1,<,601
+601, ,<,611
+
+602,0,<,602 // GO BACK TO THE END OF OPERAND B ( CARRY A: 0 CARRY B: 1 RESTORE B: 1 )
+602,1,<,602
+602, ,<,612
+
+603,0,<,603 // GO BACK TO THE END OF OPERAND B ( CARRY A: 1 CARRY B: 0 RESTORE B: 0 )
+603,1,<,603
+603, ,<,613
+
+604,0,<,604 // GO BACK TO THE END OF OPERAND B ( CARRY A: 1 CARRY B: 1 RESTORE B: 1 )
+604,1,<,604
+604, ,<,614
+
+
+611,0,<,611 // GO BACK TO THE WHITESPACE INSIDE OPERAND B ( CARRY A: 0 CARRY B: 0 RESTORE B: 0 )
+611,1,<,611
+611, ,<,621
+
+612,0,<,612 // GO BACK TO THE WHITESPACE INSIDE OPERAND B ( CARRY A: 0 CARRY B: 1 RESTORE B: 1 )
+612,1,<,612
+612, ,<,622
+
+613,0,<,613 // GO BACK TO THE WHITESPACE INSIDE OPERAND B ( CARRY A: 1 CARRY B: 0 RESTORE B: 0 )
+613,1,<,613
+613, ,<,623
+
+614,0,<,614 // GO BACK TO THE WHITESPACE INSIDE OPERAND B ( CARRY A: 1 CARRY B: 1 RESTORE B: 1 )
+614,1,<,614
+614, ,<,624
+
+
+621,0,<,621 // GO BACK TO THE START OF OPERAND B ( CARRY A: 0 CARRY B: 0 RESTORE B: 0 )
+621,1,<,621
+621, ,<,631
+
+622,0,<,622 // GO BACK TO THE START OF OPERAND B ( CARRY A: 0 CARRY B: 1 RESTORE B: 1 )
+622,1,<,622
+622, ,<,632
+
+623,0,<,623 // GO BACK TO THE START OF OPERAND B ( CARRY A: 1 CARRY B: 0 RESTORE B: 0 )
+623,1,<,623
+623, ,<,633
+
+624,0,<,624 // GO BACK TO THE START OF OPERAND B ( CARRY A: 1 CARRY B: 1 RESTORE B: 1 )
+624,1,<,624
+624, ,<,634
+
+
+631,0,<,631 // GO BACK TO THE WHITESPACE INSIDE OPERAND A ( CARRY A: 0 CARRY B: 0 RESTORE B: 0 )
+631,1,<,631
+631, ,=,701
+
+632,0,<,632 // GO BACK TO THE WHITESPACE INSIDE OPERAND A ( CARRY A: 0 CARRY B: 1 RESTORE B: 1 )
+632,1,<,632
+632, ,=,702
+
+633,0,<,633 // GO BACK TO THE WHITESPACE INSIDE OPERAND A ( CARRY A: 1 CARRY B: 0 RESTORE B: 0 )
+633,1,<,633
+633, ,=,703
+
+634,0,<,634 // GO BACK TO THE WHITESPACE INSIDE OPERAND A ( CARRY A: 1 CARRY B: 1 RESTORE B: 1 )
+634,1,<,634
+634, ,=,704
+
+// ======================== ( 700 - 799 RETURN BIT TO A, GET NEXT BIT ) ======================== \\
+
+701, ,0,711  // RETURN BIT TO OPERAND A ( CARRY A: 0 CARRY B: 0 RESTORE B: 0 )
+
+702, ,0,712  // RETURN BIT TO OPERAND A ( CARRY A: 0 CARRY B: 1 RESTORE B: 1 )
+
+703, ,1,711  // RETURN BIT TO OPERAND A ( CARRY A: 1 CARRY B: 0 RESTORE B: 0 )
+
+704, ,1,712  // RETURN BIT TO OPERAND A ( CARRY A: 1 CARRY B: 1 RESTORE B: 1 )
+
+
+711,0,>,721  // MOVE RIGHT ( CARRY A: NIL CARRY B: 0 RESTORE B: 0 )
+711,1,>,721
+
+712,0,>,722  // MOVE RIGHT ( CARRY A: NIL CARRY B: 1 RESTORE B: 1 )
+712,1,>,722
+
+721,0, ,731  // READ BIT ( CARRY A: NIL CARRY B: 0 RESTORE B: 0 )
+721,1, ,732
+
+722,0, ,733  // READ BIT ( CARRY A: NIL CARRY B: 1 RESTORE B: 1 )
+722,1, ,734
+
+731, ,>,801 // MOVE RIGHT ( CARRY A: 0 CARRY B: 0 RESTORE B: 0 )
+
+732, ,>,802 // MOVE RIGHT ( CARRY A: 1 CARRY B: 0 RESTORE B: 0 )
+
+733, ,>,803 // MOVE RIGHT ( CARRY A: 0 CARRY B: 1 RESTORE B: 1 )
+
+734, ,>,804 // MOVE RIGHT ( CARRY A: 1 CARRY B: 1 RESTORE B: 1 )
+
+
+// HERE GOES SPECIAL CASE
+
+721, ,>,1201 // EXIT LOOP ( CARRY A: NIL CARRY B: 0 RESTORE B: 0 )
+
+722, ,>,1202 // EXIT LOOP ( CARRY A: NIL CARRY B: 1 RESTORE B: 1 )
+
+
+// ======================== ( 801 - 899 SKIP OPERAND A ) ======================== \\
+
+801,0,>,801 // MOVE RIGHT ( CARRY A: 0 CARRY B: 0 RESTORE B: 0 )
+801,1,>,801 
+801, ,>,901 
+
+
+802,0,>,802 // MOVE RIGHT ( CARRY A: 1 CARRY B: 0 RESTORE B: 0 )
+802,1,>,802 
+802, ,>,902 
+
+
+803,0,>,803 // MOVE RIGHT ( CARRY A: 0 CARRY B: 1 RESTORE B: 1 )
+803,1,>,803 
+803, ,>,903 
+
+
+804,0,>,804 // MOVE RIGHT ( CARRY A: 1 CARRY B: 1 RESTORE B: 1 )
+804,1,>,804
+804, ,>,904
+
+// ======================== ( 901 - 999 SKIP OPERAND B LEFTOVERS, RETURN BIT TO B, GET NEXT BIT ) ======================== \\
+
+901,0,>,901 // MOVE RIGHT OR RETURN BIT ( CARRY A: 0 CARRY B: 0 RESTORE B: 0 )
+901,1,>,901
+901, ,0,911
+
+902,0,>,902 // MOVE RIGHT OR RETURN BIT ( CARRY A: 1 CARRY B: 0 RESTORE B: 0 )
+902,1,>,902
+902, ,0,912
+
+903,0,>,903 // MOVE RIGHT OR RETURN BIT ( CARRY A: 0 CARRY B: 1 RESTORE B: 1 )
+903,1,>,903
+903, ,1,911
+
+904,0,>,904 // MOVE RIGHT OR RETURN BIT ( CARRY A: 1 CARRY B: 1 RESTORE B: 0 )
+904,1,>,904
+904, ,1,912
+
+911,0,>,921 // MOVE RIGHT AFTER RETURN OF THE BIT ( CARRY A: 0 CARRY B: NIL RESTORE B: NIL )
+911,1,>,921
+
+912,0,>,922 // MOVE RIGHT AFTER RETURN OF THE BIT ( CARRY A: 1 CARRY B: NIL RESTORE B: NIL )
+912,1,>,922
+
+
+
+921,0, ,931 // READ BIT ( CARRY A: 0 CARRY B: NIL RESTORE B: NIL )
+921,1, ,932
+
+922,0, ,933 // READ BIT ( CARRY A: 1 CARRY B: NIL RESTORE B: NIL )
+922,1, ,934 
+
+931, ,>,1001 // MOVE RIGHT ( CARRY A: 0 CARRY B: 0 RESTORE B: 0 )
+
+932, ,>,1002 // MOVE RIGHT ( CARRY A: 0 CARRY B: 1 RESTORE B: 1 )
+
+933, ,>,1003 // MOVE RIGHT ( CARRY A: 1 CARRY B: 0 RESTORE B: 0 )
+
+934, ,>,1004 // MOVE RIGHT ( CARRY A: 1 CARRY B: 1 RESTORE B: 1 )
+
+// ======================== ( 1000 - 1099 SKIP OPERAND B LEFTOVERS ) ======================== \\
+
+1001,0,>,1001 // MOVE RIGHT ( CARRY A: 0 CARRY B: 0 RESTORE B: 0 )
+1001,1,>,1001
+1001, ,>,1101
+
+1002,0,>,1002 // MOVE RIGHT ( CARRY A: 0 CARRY B: 1 RESTORE B: 1 )
+1002,1,>,1002
+1002, ,>,1102
+
+1003,0,>,1003 // MOVE RIGHT ( CARRY A: 1 CARRY B: 0 RESTORE B: 0 )
+1003,1,>,1003
+1003, ,>,1103
+
+1004,0,>,1004 // MOVE RIGHT ( CARRY A: 1 CARRY B: 1 RESTORE B: 1 )
+1004,1,>,1004
+1004, ,>,1104
+
+// ======================== ( 1100 - 1199 SKIP UNFINISHED RESULT, PASTE BIT AND RETURN TO 600-699 ) ======================== \\
+
+1101,0,>,1101 // MOVE RIGHT ( CARRY A: 0 CARRY B: 0 RESTORE B: 0 )
+1101,1,>,1101
+1101, ,0,601
+
+1102,0,>,1102 // MOVE RIGHT ( CARRY A: 0 CARRY B: 1 RESTORE B: 1 )
+1102,1,>,1102
+1102, ,1,602
+
+1103,0,>,1103 // MOVE RIGHT ( CARRY A: 1 CARRY B: 0 RESTORE B: 0 )
+1103,1,>,1103
+1103, ,1,603
+
+1104,0,>,1104 // MOVE RIGHT ( CARRY A: 1 CARRY B: 1 RESTORE B: 1 )
+1104,1,>,1104
+1104, ,0,604
+
+// ======================== ( 1200 - 1299 EXIT LOOP ) ======================== \\
+
+1201,0,>,1201 // MOVE RIGHT OR RETURN BIT ( CARRY A: NIL CARRY B: 0 RESTORE B: 0 )
+1201,1,>,1201
+1201, ,0,1211
+
+1202,0,>,1202 // MOVE RIGHT OR RETURN BIT ( CARRY A: NIL CARRY B: 1 RESTORE B: 1 )
+1202,1,>,1202
+1202, ,1,1212
+
+1212,0,>,1213 // MOVE TO THE END ( IRRELEVANT )
+1212,1,>,1213
+
+1211,0,>,1213 // MOVE TO THE END ( IRRELEVANT )
+1211,1,>,1213
+
+1213, ,>,1214 // MOVE TO THE END ( IRRELEVANT )
+
+1214,0,>,1214 // MOVE TO THE END ( IRRELEVANT )
+1214,1,>,1214 // MOVE TO THE END ( IRRELEVANT )
+1214, ,=,1214 // HALT ( IRRELEVANT )
+
+// --- SISP --- \\
