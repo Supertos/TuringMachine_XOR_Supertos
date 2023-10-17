@@ -10,22 +10,22 @@
 
 // ====================================================================================== \\
 // DOCUMENT MAP:
-// 000 - 099 	INITIALIZATION												+-INITIALIZATION
+// 000 - 099 	INITIALIZATION												                        +-INITIALIZATION
 //
-// 100 - 101 	READ FIRST BIT OF A OPERAND									+
-// 200 - 299 	SKIP OPERAND A												|
-// 300 - 399 	READ FIRST BIT OF B OPERAND									|-FIRST BIT PROCESSING
-// 400 - 499 	SKIP OPERAND B												|
-// 500 - 599 	INSERT FIRST OUT BIT										+
+// 100 - 101 	READ FIRST BIT OF A OPERAND						                        +
+// 200 - 299 	SKIP OPERAND A												                        |
+// 300 - 399 	READ FIRST BIT OF B OPERAND						                        |-FIRST BIT PROCESSING
+// 400 - 499 	SKIP OPERAND B												                        |
+// 500 - 599 	INSERT FIRST OUT BIT									                        +
 // 
-// 600 - 699 	RETURN BACK TO OPERAND A									+
-// 700 - 799 	RETURN BIT TO A, GET NEXT BIT								|
-// 800 - 899 	SKIP OPERAND A												|
-// 900 - 999 	SKIP OPERAND B LEFTOVERS, RETURN BIT TO B, GET NEXT BIT		|-MAIN FLOW
-// 1000 - 1099	SKIP OPERAND B LEFTOVERS									|
-// 1100 - 1199	SKIP UNFINISHED RESULT, PASTE BIT AND RETURN TO 600-699		+
+// 600 - 699 	RETURN BACK TO OPERAND A								                      +
+// 700 - 799 	RETURN BIT TO A, GET NEXT BIT								                  |
+// 800 - 899 	SKIP OPERAND A												                        |
+// 900 - 999 	SKIP OPERAND B LEFTOVERS, RETURN BIT TO B, GET NEXT BIT		    |-MAIN FLOW
+// 1000 - 1099	SKIP OPERAND B LEFTOVERS									                  |
+// 1100 - 1199	SKIP UNFINISHED RESULT, PASTE BIT AND RETURN TO 600-699		  +
 //
-// 1200 - 1299 	EXIT LOOP													+-FINALIZATION
+// 1200 - 1299 	EXIT LOOP													                          +-FINALIZATION
 // ====================================================================================== \\
 
 // ====================================================================================== \\
